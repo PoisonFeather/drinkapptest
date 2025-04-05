@@ -21,7 +21,7 @@ class PlacesService {
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
         '?location=${location.latitude},${location.longitude}'
         '&radius=2500'
-        '&type=bar|pub|alcohol'
+        '&keyword=bar|pub|club|beer|cocktail|alcool|vin|bere'
         '&key=$_apiKey'
         '${nextPageToken != null ? '&pagetoken=$nextPageToken' : ''}',
       );

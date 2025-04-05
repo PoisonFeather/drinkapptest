@@ -5,6 +5,8 @@ import '../services/firebase_service.dart';
 import '../screens/feedback_screen.dart';
 import '../services/places_service.dart';
 
+double zoom = 18;
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -113,7 +115,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     onCameraIdle: () async {
                       if (_mapController == null) return;
-                      if (_currentZoom >= 15) {
+                      if (_currentZoom >= zoom) {
                         final newLabels = await _createLabelsFromMarkers(
                           _markers.toList(),
                         );
@@ -124,14 +126,14 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     initialCameraPosition: CameraPosition(
                       target: _currentPosition!,
-                      zoom: 12,
+                      zoom: zoom,
                     ),
                     mapType: MapType.satellite,
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
                     markers: _markers.toSet(),
                   ),
-                  if (_currentZoom >= 15)
+                  if (_currentZoom >= zoom)
                     ..._labels.map(
                       (label) => Positioned(
                         left: label.screenPosition.x.toDouble() - 50,

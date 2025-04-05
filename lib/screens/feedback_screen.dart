@@ -22,6 +22,7 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   String _selectedVibe = 'Mid';
   double _crowdedness = 5;
+  String? _closingTime;
 
   Map<String, dynamic>? _stats;
   List<String> _photoUrls = [];
@@ -31,20 +32,37 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     {'label': 'Mid 😬', 'value': 'Mid'},
     {'label': 'Top 🤪', 'value': 'Top'},
   ];
-  void _showFullImage(String imageUrl) {
+  void _showFullImage(int initialIndex) {
     showDialog(
       context: context,
-      builder:
-          (_) => Dialog(
-            backgroundColor: Colors.black,
-            insetPadding: const EdgeInsets.all(10),
-            child: InteractiveViewer(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(imageUrl),
-              ),
-            ),
+      builder: (_) {
+        PageController _pageController = PageController(
+          initialPage: initialIndex,
+        );
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: const EdgeInsets.all(10),
+          child: StatefulBuilder(
+            builder:
+                (context, setState) => SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: _photoUrls.length,
+                    itemBuilder: (context, index) {
+                      return InteractiveViewer(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(0),
+                          child: Image.network(_photoUrls[index]),
+                        ),
+                      );
+                    },
+                  ),
+                ),
           ),
+        );
+      },
     );
   }
 
@@ -66,14 +84,46 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Future<void> _loadPhotos() async {
     final apiKey = 'AIzaSyCxlfZ_j9P_M4Y1NAwXc1tY67Zpb-KHIU8';
     final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/place/details/json?place_id=${widget.placeId}&fields=photos&key=$apiKey',
+      'https://maps.googleapis.com/maps/api/place/details/json?place_id=${widget.placeId}&fields=photos,opening_hours&key=$apiKey',
     );
 
     final response = await http.get(url);
     final data = json.decode(response.body);
 
     if (data['status'] == 'OK') {
-      final photos = data['result']['photos'] as List<dynamic>?;
+      final result = data['result'];
+      final photos = result['photos'] as List<dynamic>?;
+      final openingHours = result['opening_hours'];
+
+      // Ia ziua curentă (ex: "Monday")
+      final now = DateTime.now();
+      final weekday =
+          [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+          ][now.weekday - 1];
+
+      if (openingHours != null && openingHours['weekday_text'] != null) {
+        final List<dynamic> days = openingHours['weekday_text'];
+        final todayLine = days.firstWhere(
+          (line) => line.startsWith(weekday),
+          orElse: () => null,
+        );
+        if (todayLine != null && todayLine.contains('–')) {
+          final parts = todayLine.split('–');
+          if (parts.length == 2) {
+            setState(() {
+              _closingTime = parts[1].trim();
+            });
+          }
+        }
+      }
+
       if (photos != null && photos.isNotEmpty) {
         setState(() {
           _photoUrls =
@@ -121,7 +171,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(widget.placeName)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -135,10 +185,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   separatorBuilder: (_, __) => const SizedBox(width: 12),
                   itemBuilder:
                       (_, index) => ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         child: GestureDetector(
                           onTap: () {
-                            _showFullImage(_photoUrls[index]);
+                            _showFullImage(index);
                           },
                           child: Image.network(_photoUrls[index]),
                         ),
@@ -181,6 +231,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     ),
                   ],
                 ),
+              if (_closingTime != null)
+                Row(
+                  children: [
+                    // const Icon(Icons.schedule, size: 18, color: Colors.white70),
+                    const SizedBox(width: 2),
+                    Text(
+                      '🔐 Închide la $_closingTime',
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                    ),
+                  ],
+                ),
+
               const SizedBox(height: 20),
             ],
             Text("Care-i vibe-ul?", style: const TextStyle(fontSize: 20)),
