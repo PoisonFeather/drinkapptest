@@ -28,7 +28,7 @@ class FirebaseService {
 
     for (var doc in snapshot.docs) {
       final data = doc.data();
-      print('[DEBUG] Data: $data');
+      //print('[DEBUG] Data: $data');
 
       totalCrowdedness += (data['crowdedness'] ?? 0).toDouble();
 
@@ -53,7 +53,7 @@ class FirebaseService {
       'lastUpdated': lastUpdated,
     };
 
-    print('[DEBUG] Stats result: $result');
+    //print('[DEBUG] Stats result: $result');
 
     // 🔁 Salvează în cache pentru heatmap
     feedbackStats[placeId] = {

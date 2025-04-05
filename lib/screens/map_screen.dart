@@ -7,6 +7,7 @@ import '../services/places_service.dart';
 import '../services/background_task.dart';
 import '../services/heatmap_painter.dart';
 import '../models/heat_point.dart';
+import 'dart:async';
 
 double zoom = 18;
 
@@ -25,6 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   double _currentZoom = 15;
   bool _showHeatmap = false;
   List<HeatPoint> _heatPoints = [];
+  Timer? _updateTimer;
 
   @override
   void initState() {
@@ -103,6 +105,7 @@ class _MapScreenState extends State<MapScreen> {
 
   //heatmap
   Future<void> _updateHeatmapPoints() async {
+    //print("Heatmap loading...");
     if (_mapController == null) return;
 
     final List<HeatPoint> points = [];
@@ -125,12 +128,33 @@ class _MapScreenState extends State<MapScreen> {
               : vibe == 'Mid'
               ? Colors.orange
               : Colors.blue;
-
+      //print(color);
       points.add(HeatPoint(offset, color, crowded));
     }
 
     setState(() {
       _heatPoints = points;
+    });
+  }
+
+  //update
+  void _scheduleFullUpdate() {
+    if (_updateTimer?.isActive ?? false) return;
+
+    _updateTimer = Timer(const Duration(milliseconds: 300), () async {
+      if (_currentZoom >= zoom) {
+        final newLabels = await _createLabelsFromMarkers(_markers.toList());
+        setState(() => _labels = newLabels);
+
+        if (_showHeatmap) {
+          await _updateHeatmapPoints();
+        }
+      } else {
+        setState(() {
+          _labels = [];
+          _heatPoints = [];
+        });
+      }
     });
   }
 
@@ -150,6 +174,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     onCameraMove: (position) {
                       _currentZoom = position.zoom;
+                      _scheduleFullUpdate(); // ⚡ update continuu
                     },
                     onCameraIdle: () async {
                       if (_mapController == null) return;
@@ -158,8 +183,13 @@ class _MapScreenState extends State<MapScreen> {
                           _markers.toList(),
                         );
                         setState(() => _labels = newLabels);
+                        if (_showHeatmap) {
+                          await _updateHeatmapPoints(); // 🔥 REGENEREAZĂ punctele în poziție corectă
+                        }
                       } else {
                         setState(() => _labels = []);
+                        _labels = [];
+                        _heatPoints = [];
                       }
                     },
                     initialCameraPosition: CameraPosition(
