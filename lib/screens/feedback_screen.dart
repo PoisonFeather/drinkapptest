@@ -92,7 +92,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       await _loadStats();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Feedback trimis cu succes!')),
+          const SnackBar(content: Text('Vibe-uri trimise cu succes!')),
         );
       }
     } catch (e) {
@@ -162,6 +162,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
               const SizedBox(height: 20),
             ],
+            Text("Care-i vibe-ul?", style: const TextStyle(fontSize: 20)),
             DropdownButton<String>(
               value: _selectedVibe,
               onChanged: (value) => setState(() => _selectedVibe = value!),
@@ -190,7 +191,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               label: _crowdedness.round().toString(),
               onChanged: (value) => setState(() => _crowdedness = value),
             ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _submitFeedback,
+              child: const Text('Trimite Feedback'),
+            ),
             Align(
+              //share button
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
                 onPressed: () {
@@ -202,8 +209,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 ''';
                   Share.share(shareText);
                 },
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Share'),
+                icon: const Icon(Icons.arrow_circle_up_outlined, size: 18),
+                label: const Text(
+                  'Invita-ti prietenii',
+                  style: const TextStyle(fontSize: 12),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[800],
                   foregroundColor: Colors.white,
@@ -217,11 +227,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _submitFeedback,
-              child: const Text('Trimite Feedback'),
             ),
           ],
         ),
