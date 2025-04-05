@@ -3,9 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'firebase_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PlacesService {
-  static const String _apiKey = 'AIzaSyCxlfZ_j9P_M4Y1NAwXc1tY67Zpb-KHIU8';
+  static final String _apiKey = dotenv.env['API_KEY'] ?? "";
 
   static Future<List<Marker>> getNearbyBars(
     LatLng location,

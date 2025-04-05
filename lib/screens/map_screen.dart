@@ -7,6 +7,7 @@ import '../services/places_service.dart';
 import '../services/background_task.dart';
 import '../services/heatmap_painter.dart';
 import '../models/heat_point.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 
 double zoom = 17;

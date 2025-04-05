@@ -6,6 +6,7 @@ import 'package:background_fetch/background_fetch.dart' as bf;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/map_screen.dart';
 import 'services/background_task.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -18,6 +19,7 @@ void callbackDispatcher() {
 }
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 

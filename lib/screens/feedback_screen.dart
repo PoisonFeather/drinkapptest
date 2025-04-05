@@ -5,6 +5,7 @@ import '../models/feedback_model.dart';
 import '../services/firebase_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/background_task.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final String placeId;
@@ -83,7 +84,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   Future<void> _loadPhotos() async {
-    final apiKey = 'AIzaSyCxlfZ_j9P_M4Y1NAwXc1tY67Zpb-KHIU8';
+    final apiKey = dotenv.env['API_KEY'] ?? "";
     final url = Uri.parse(
       'https://maps.googleapis.com/maps/api/place/details/json?place_id=${widget.placeId}&fields=photos,opening_hours&key=$apiKey',
     );
