@@ -9,7 +9,7 @@ class PlacesService {
 
   static Future<List<Marker>> getNearbyBars(
     LatLng location,
-    BuildContext context,
+    BuildContext? context,
     Function(String placeId, String placeName) onTapMarker,
   ) async {
     List<Map<String, dynamic>> allResults = [];
