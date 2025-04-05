@@ -275,6 +275,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               label: _crowdedness.round().toString(),
               onChanged: (value) => setState(() => _crowdedness = value),
             ),
+
+            //SHARE
             const SizedBox(height: 14),
             ElevatedButton.icon(
               onPressed: () {
@@ -288,7 +290,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               icon: const Icon(Icons.arrow_circle_up_outlined, size: 30),
               label: const Text('Invită-ți prietenii'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Colors.purple,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: 14,
@@ -309,7 +311,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           onPressed: _submitFeedback,
           child: const Text('Trimite Feedback'),
           style: ElevatedButton.styleFrom(
-            textStyle: const TextStyle(fontSize: 28), // text mai mare
+            textStyle: const TextStyle(fontSize: 28),
+            backgroundColor: Colors.deepPurpleAccent,
+            foregroundColor: Colors.white, // text mai mare
           ),
         ),
       ),

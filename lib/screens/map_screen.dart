@@ -9,7 +9,7 @@ import '../services/heatmap_painter.dart';
 import '../models/heat_point.dart';
 import 'dart:async';
 
-double zoom = 18;
+double zoom = 15;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -103,7 +103,12 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  //heatmap
+  ///---------------------------------------------------------------------------
+  /// HEATMAP - _updateHeatmapPoints() :
+  /// ia marker position , vibe si crowd(intesnitate)
+  /// adauga un obiect HeatPoint la points
+  ///
+  /// --------------------------------------------------------------------------
   Future<void> _updateHeatmapPoints() async {
     //print("Heatmap loading...");
     if (_mapController == null) return;
@@ -137,11 +142,14 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  //update
+  ///---------------------------------------------------------------------------
+  /// Map View : _scheduleFullUpdate():
+  ///  da un sleep async care sa dea update la heatpoints
+  ///  -------------------------------------------------------------------------
   void _scheduleFullUpdate() {
     if (_updateTimer?.isActive ?? false) return;
 
-    _updateTimer = Timer(const Duration(milliseconds: 300), () async {
+    _updateTimer = Timer(const Duration(milliseconds: 20), () async {
       if (_currentZoom >= zoom) {
         final newLabels = await _createLabelsFromMarkers(_markers.toList());
         setState(() => _labels = newLabels);

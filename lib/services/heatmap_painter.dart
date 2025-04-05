@@ -11,10 +11,10 @@ class HeatmapPainter extends CustomPainter {
     for (final p in points) {
       final paint =
           Paint()
-            ..color = p.color.withOpacity(p.intensity.clamp(0.2, 1) / 10)
+            ..color = p.color.withOpacity(p.intensity.clamp(0.2, 1) / 2)
             ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(p.offset, 30 + p.intensity * 3, paint);
+      canvas.drawCircle(p.offset, 30 + p.intensity * 10, paint);
     }
   }
 
