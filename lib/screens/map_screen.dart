@@ -57,12 +57,13 @@ class _MapScreenState extends State<MapScreen> {
     });
 
     await Future.delayed(const Duration(milliseconds: 500));
-    if (_mapController != null && _currentZoom >= 12) {
+    if (_mapController != null && _currentZoom >= 15) {
       final newLabels = await _createLabelsFromMarkers(markers);
       setState(() => _labels = newLabels);
     }
   }
 
+  //Info Bar-uri negre de sub markere NU alea albe
   Future<List<_MarkerLabel>> _createLabelsFromMarkers(
     List<Marker> markers,
   ) async {
@@ -110,7 +111,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     onCameraIdle: () async {
                       if (_mapController == null) return;
-                      if (_currentZoom >= 18) {
+                      if (_currentZoom >= 15) {
                         final newLabels = await _createLabelsFromMarkers(
                           _markers.toList(),
                         );
@@ -121,7 +122,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     initialCameraPosition: CameraPosition(
                       target: _currentPosition!,
-                      zoom: 15,
+                      zoom: 12,
                     ),
                     mapType: MapType.satellite,
                     myLocationEnabled: true,

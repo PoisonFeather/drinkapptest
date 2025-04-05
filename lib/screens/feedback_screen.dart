@@ -196,6 +196,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               onPressed: _submitFeedback,
               child: const Text('Trimite Feedback'),
             ),
+            const SizedBox(height: 30),
             Align(
               //share button
               alignment: Alignment.centerRight,

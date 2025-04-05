@@ -20,7 +20,7 @@ class PlacesService {
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
         '?location=${location.latitude},${location.longitude}'
         '&radius=2500'
-        '&type=bar|pub|alcohool'
+        '&type=bar|pub|alcohol'
         '&key=$_apiKey'
         '${nextPageToken != null ? '&pagetoken=$nextPageToken' : ''}',
       );
