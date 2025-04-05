@@ -73,11 +73,13 @@ class _MapScreenState extends State<MapScreen> {
       final screenCoordinate = await _mapController!.getScreenCoordinate(
         marker.position,
       );
+      final placeId = marker.markerId.value;
+      final name = FirebaseService.placeNames[placeId];
+
+      if (name == null) continue; // Sari peste markerii fără nume
+
       labels.add(
-        _MarkerLabel(
-          text: marker.infoWindow.title ?? '',
-          screenPosition: screenCoordinate,
-        ),
+        _MarkerLabel(id: placeId, text: name, screenPosition: screenCoordinate),
       );
     }
     return labels;
@@ -134,20 +136,30 @@ class _MapScreenState extends State<MapScreen> {
                       (label) => Positioned(
                         left: label.screenPosition.x.toDouble() - 50,
                         top: label.screenPosition.y.toDouble(),
-                        child: Container(
-                          width: 100,
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            label.text,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
+                        child: GestureDetector(
+                          onTap: () {
+                            final placeId =
+                                label
+                                    .id; // trebuie să adăugăm și `id` în _MarkerLabel
+                            final name =
+                                FirebaseService.placeNames[placeId] ?? 'Bar';
+                            _openFeedbackSheet(placeId, name);
+                          },
+                          child: Container(
+                            width: 100,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            textAlign: TextAlign.center,
+                            child: Text(
+                              label.text,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
@@ -159,8 +171,13 @@ class _MapScreenState extends State<MapScreen> {
 }
 
 class _MarkerLabel {
+  final String id; // placeId
   final String text;
   final ScreenCoordinate screenPosition;
 
-  _MarkerLabel({required this.text, required this.screenPosition});
+  _MarkerLabel({
+    required this.id,
+    required this.text,
+    required this.screenPosition,
+  });
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'firebase_service.dart';
 
 class PlacesService {
   static const String _apiKey = 'AIzaSyCxlfZ_j9P_M4Y1NAwXc1tY67Zpb-KHIU8';
@@ -51,16 +52,18 @@ class PlacesService {
       final geometry = place['geometry']['location'];
       final name = place['name'];
       final placeId = place['place_id'];
+      FirebaseService.placeNames[placeId] = name;
 
       return Marker(
         markerId: MarkerId(placeId),
         position: LatLng(geometry['lat'], geometry['lng']),
-        infoWindow: InfoWindow(
-          title: name,
-          onTap: () {
-            onTapMarker(placeId, name);
-          },
-        ),
+
+        // infoWindow: InfoWindow(
+        //   title: name,
+        onTap: () {
+          onTapMarker(placeId, name);
+        },
+        // ),
         anchor: const Offset(0.5, 1.5),
       );
     }).toList();

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/feedback_model.dart';
 
 class FirebaseService {
+  static Map<String, String> placeNames = {}; // placeId -> name
+
   static Future<Map<String, dynamic>> getFeedbackStats(String placeId) async {
     print('[DEBUG] getFeedbackStats() for $placeId');
 
