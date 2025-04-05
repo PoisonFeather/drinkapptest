@@ -4,6 +4,7 @@ import 'dart:convert';
 import '../models/feedback_model.dart';
 import '../services/firebase_service.dart';
 import 'package:share_plus/share_plus.dart';
+import '../services/background_task.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final String placeId;
@@ -157,9 +158,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       await FirebaseService.sendFeedback(widget.placeId, feedback);
       await _loadStats();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vibe-uri trimise cu succes!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Succes!')));
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -172,7 +173,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.placeName)),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -279,40 +280,31 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               onPressed: _submitFeedback,
               child: const Text('Trimite Feedback'),
             ),
-            const SizedBox(height: 30),
-            Align(
-              //share button
-              alignment: Alignment.centerRight,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  final shareText = '''
-🍻 Hai la ${widget.placeName} sa bem ceva!
-
-📍 https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(widget.placeName)}&query_place_id=${widget.placeId}
-
-''';
-                  Share.share(shareText);
-                },
-                icon: const Icon(Icons.arrow_circle_up_outlined, size: 18),
-                label: const Text(
-                  'Invita-ti prietenii',
-                  style: const TextStyle(fontSize: 12),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[800],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  textStyle: const TextStyle(fontSize: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ElevatedButton.icon(
+          onPressed: () {
+            final shareText = '''
+🍻 Hai la ${widget.placeName} să bem ceva!
+
+📍 https://maps.google.com/?q=${Uri.encodeComponent(widget.placeName)}
+''';
+            Share.share(shareText);
+          },
+          icon: const Icon(Icons.arrow_circle_up_outlined, size: 20),
+          label: const Text('Invită-ți prietenii'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            textStyle: const TextStyle(fontSize: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         ),
       ),
     );

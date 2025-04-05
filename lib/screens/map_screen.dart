@@ -4,6 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import '../services/firebase_service.dart';
 import '../screens/feedback_screen.dart';
 import '../services/places_service.dart';
+import '../services/background_task.dart';
+import '../services/heatmap_painter.dart';
+import '../models/heat_point.dart';
 
 double zoom = 18;
 
@@ -20,6 +23,8 @@ class _MapScreenState extends State<MapScreen> {
   Set<Marker> _markers = {};
   List<_MarkerLabel> _labels = [];
   double _currentZoom = 15;
+  bool _showHeatmap = false;
+  List<HeatPoint> _heatPoints = [];
 
   @override
   void initState() {
@@ -96,6 +101,39 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  //heatmap
+  Future<void> _updateHeatmapPoints() async {
+    if (_mapController == null) return;
+
+    final List<HeatPoint> points = [];
+
+    for (var marker in _markers) {
+      final stat = FirebaseService.feedbackStats[marker.markerId.value];
+      if (stat == null) continue;
+
+      final screenCoord = await _mapController!.getScreenCoordinate(
+        marker.position,
+      );
+      final offset = Offset(screenCoord.x.toDouble(), screenCoord.y.toDouble());
+
+      final vibe = stat['vibe'] ?? 'Mid';
+      final crowded = (stat['avgCrowdedness'] ?? 5).toDouble();
+
+      final color =
+          vibe == 'Top'
+              ? Colors.red
+              : vibe == 'Mid'
+              ? Colors.orange
+              : Colors.blue;
+
+      points.add(HeatPoint(offset, color, crowded));
+    }
+
+    setState(() {
+      _heatPoints = points;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +171,15 @@ class _MapScreenState extends State<MapScreen> {
                     myLocationButtonEnabled: true,
                     markers: _markers.toSet(),
                   ),
+                  if (_showHeatmap)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: CustomPaint(
+                          painter: HeatmapPainter(_heatPoints),
+                        ),
+                      ),
+                    ),
+
                   if (_currentZoom >= zoom)
                     ..._labels.map(
                       (label) => Positioned(
@@ -166,6 +213,26 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                       ),
                     ),
+                  Positioned(
+                    top: 40,
+                    right: 16,
+                    child: FloatingActionButton(
+                      heroTag: 'heatmap_toggle',
+                      backgroundColor: Colors.deepPurple,
+                      onPressed: () async {
+                        if (!_showHeatmap) {
+                          await _updateHeatmapPoints(); // generează punctele înainte să le afișezi
+                        }
+                        setState(() {
+                          _showHeatmap = !_showHeatmap;
+                        });
+                      },
+
+                      child: Icon(
+                        _showHeatmap ? Icons.visibility_off : Icons.visibility,
+                      ),
+                    ),
+                  ),
                 ],
               ),
     );

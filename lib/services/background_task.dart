@@ -10,6 +10,23 @@ class BackgroundTask {
   static final Set<String> notifiedBars = {};
 
   static Future<void> checkAndNotify() async {
+    print('[BackgroundTask] Rulez verificarea de proximitate...');
+
+    // await flutterLocalNotificationsPlugin.show(
+    //   999,
+    //   '🔔 Test notificare din background',
+    //   'Taskul rulează corect!',
+    //   const NotificationDetails(
+    //     android: AndroidNotificationDetails(
+    //       'test_channel',
+    //       'Test Channel',
+    //       importance: Importance.high,
+    //       priority: Priority.high,
+    //     ),
+    //     iOS: DarwinNotificationDetails(),
+    //   ),
+    // );
+
     try {
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -26,7 +43,7 @@ class BackgroundTask {
         final placeId = marker.markerId.value;
 
         // Verifică dacă am notificat deja barul
-        if (notifiedBars.contains(placeId)) continue;
+        //if (notifiedBars.contains(placeId)) continue;
 
         final distance = Geolocator.distanceBetween(
           userLocation.latitude,
@@ -35,11 +52,11 @@ class BackgroundTask {
           marker.position.longitude,
         );
 
-        if (distance < 50) {
-          notifiedBars.add(placeId); // ✅ adaugă barul în lista celor notificate
+        if (distance < 100) {
+          //notifiedBars.add(placeId); // ✅ adaugă barul în lista celor notificate
 
           final barName = FirebaseService.placeNames[placeId] ?? 'acest bar';
-
+          print('Notificare pentru ${FirebaseService.placeNames[placeId]}');
           await flutterLocalNotificationsPlugin.show(
             0,
             '🍻 Ești la $barName?',
