@@ -32,7 +32,7 @@ class FirebaseService {
 
       totalCrowdedness += (data['crowdedness'] ?? 0).toDouble();
 
-      final vibe = data['vibe'] ?? 'Mid';
+      final vibe = data['vibe'] ?? 'Lame';
       vibeCounts[vibe] = (vibeCounts[vibe] ?? 0) + 1;
 
       final ts = (data['timestamp'] as Timestamp).toDate();

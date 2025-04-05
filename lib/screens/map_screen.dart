@@ -71,6 +71,7 @@ class _MapScreenState extends State<MapScreen> {
       final newLabels = await _createLabelsFromMarkers(markers);
       setState(() => _labels = newLabels);
     }
+    await _loadAllFeedbackStats();
   }
 
   //Info Bar-uri negre de sub markere NU alea albe
@@ -135,7 +136,7 @@ class _MapScreenState extends State<MapScreen> {
               ? Colors.orange
               : Colors.blue;
       //print(color);
-      points.add(HeatPoint(offset, color, crowded, currzoom));
+      points.add(HeatPoint(offset, color, crowded, currzoom, crowded));
     }
 
     setState(() {
@@ -165,6 +166,21 @@ class _MapScreenState extends State<MapScreen> {
         });
       }
     });
+  }
+
+  ///---------------------------------------------------------------------------
+  ///  _loadAllFeedbackStats() :  incarca toate statisticile pentru
+  ///  toate markerele
+  ///  -------------------------------------------------------------------------
+  Future<void> _loadAllFeedbackStats() async {
+    for (var marker in _markers) {
+      // Apelează getFeedbackStats pentru fiecare marker (placeId)
+      final stats = await FirebaseService.getFeedbackStats(
+        marker.markerId.value,
+      );
+      // Salvează rezultatul în feedbackStats (care e un Map)
+      FirebaseService.feedbackStats[marker.markerId.value] = stats;
+    }
   }
 
   @override
