@@ -275,36 +275,39 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               label: _crowdedness.round().toString(),
               onChanged: (value) => setState(() => _crowdedness = value),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _submitFeedback,
-              child: const Text('Trimite Feedback'),
+            const SizedBox(height: 14),
+            ElevatedButton.icon(
+              onPressed: () {
+                final shareText = '''
+🍻 Hai la ${widget.placeName} să bem ceva!
+
+📍 https://maps.google.com/?q=${Uri.encodeComponent(widget.placeName)}
+''';
+                Share.share(shareText);
+              },
+              icon: const Icon(Icons.arrow_circle_up_outlined, size: 30),
+              label: const Text('Invită-ți prietenii'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 14,
+                ),
+                textStyle: const TextStyle(fontSize: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
-        child: ElevatedButton.icon(
-          onPressed: () {
-            final shareText = '''
-🍻 Hai la ${widget.placeName} să bem ceva!
-
-📍 https://maps.google.com/?q=${Uri.encodeComponent(widget.placeName)}
-''';
-            Share.share(shareText);
-          },
-          icon: const Icon(Icons.arrow_circle_up_outlined, size: 20),
-          label: const Text('Invită-ți prietenii'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            textStyle: const TextStyle(fontSize: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
+        child: ElevatedButton(
+          onPressed: _submitFeedback,
+          child: const Text('Trimite Feedback'),
         ),
       ),
     );
