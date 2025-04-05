@@ -3,6 +3,7 @@ import '../models/feedback_model.dart';
 
 class FirebaseService {
   static Map<String, String> placeNames = {}; // placeId -> name
+  static Map<String, Map<String, dynamic>> feedbackStats = {};
 
   static Future<Map<String, dynamic>> getFeedbackStats(String placeId) async {
     print('[DEBUG] getFeedbackStats() for $placeId');
@@ -27,7 +28,7 @@ class FirebaseService {
 
     for (var doc in snapshot.docs) {
       final data = doc.data();
-      print('[DEBUG] Data: $data');
+      //print('[DEBUG] Data: $data');
 
       totalCrowdedness += (data['crowdedness'] ?? 0).toDouble();
 
@@ -52,8 +53,15 @@ class FirebaseService {
       'lastUpdated': lastUpdated,
     };
 
-    print('[DEBUG] Stats result: $result');
+    //print('[DEBUG] Stats result: $result');
 
+    // 🔁 Salvează în cache pentru heatmap
+    feedbackStats[placeId] = {
+      'vibe': commonVibe,
+      'avgCrowdedness': totalCrowdedness / snapshot.docs.length,
+    };
+
+    // ✅ Returnează și alte date pentru ecran
     return result;
   }
 
