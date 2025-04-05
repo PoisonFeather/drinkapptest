@@ -304,10 +304,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(30),
         child: ElevatedButton(
           onPressed: _submitFeedback,
           child: const Text('Trimite Feedback'),
+          style: ElevatedButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 28), // text mai mare
+          ),
         ),
       ),
     );
