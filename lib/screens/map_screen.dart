@@ -9,7 +9,7 @@ import '../services/heatmap_painter.dart';
 import '../models/heat_point.dart';
 import 'dart:async';
 
-double zoom = 15;
+double zoom = 17;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -109,7 +109,7 @@ class _MapScreenState extends State<MapScreen> {
   /// adauga un obiect HeatPoint la points
   ///
   /// --------------------------------------------------------------------------
-  Future<void> _updateHeatmapPoints() async {
+  Future<void> _updateHeatmapPoints(double currzoom) async {
     //print("Heatmap loading...");
     if (_mapController == null) return;
 
@@ -134,7 +134,7 @@ class _MapScreenState extends State<MapScreen> {
               ? Colors.orange
               : Colors.blue;
       //print(color);
-      points.add(HeatPoint(offset, color, crowded));
+      points.add(HeatPoint(offset, color, crowded, currzoom));
     }
 
     setState(() {
@@ -146,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
   /// Map View : _scheduleFullUpdate():
   ///  da un sleep async care sa dea update la heatpoints
   ///  -------------------------------------------------------------------------
-  void _scheduleFullUpdate() {
+  void _scheduleFullUpdate(double currzoom) {
     if (_updateTimer?.isActive ?? false) return;
 
     _updateTimer = Timer(const Duration(milliseconds: 20), () async {
@@ -155,7 +155,7 @@ class _MapScreenState extends State<MapScreen> {
         setState(() => _labels = newLabels);
 
         if (_showHeatmap) {
-          await _updateHeatmapPoints();
+          await _updateHeatmapPoints(currzoom);
         }
       } else {
         setState(() {
@@ -182,7 +182,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     onCameraMove: (position) {
                       _currentZoom = position.zoom;
-                      _scheduleFullUpdate(); // ⚡ update continuu
+                      _scheduleFullUpdate(_currentZoom); // ⚡ update continuu
                     },
                     onCameraIdle: () async {
                       if (_mapController == null) return;
@@ -192,7 +192,9 @@ class _MapScreenState extends State<MapScreen> {
                         );
                         setState(() => _labels = newLabels);
                         if (_showHeatmap) {
-                          await _updateHeatmapPoints(); // 🔥 REGENEREAZĂ punctele în poziție corectă
+                          await _updateHeatmapPoints(
+                            _currentZoom,
+                          ); // 🔥 REGENEREAZĂ punctele în poziție corectă
                         }
                       } else {
                         setState(() => _labels = []);
@@ -259,7 +261,9 @@ class _MapScreenState extends State<MapScreen> {
                       backgroundColor: Colors.deepPurple,
                       onPressed: () async {
                         if (!_showHeatmap) {
-                          await _updateHeatmapPoints(); // generează punctele înainte să le afișezi
+                          await _updateHeatmapPoints(
+                            1,
+                          ); // generează punctele înainte să le afișezi
                         }
                         setState(() {
                           _showHeatmap = !_showHeatmap;
