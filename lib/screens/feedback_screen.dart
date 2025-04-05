@@ -31,6 +31,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     {'label': 'Mid 😬', 'value': 'Mid'},
     {'label': 'Top 🤪', 'value': 'Top'},
   ];
+  void _showFullImage(String imageUrl) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => Dialog(
+            backgroundColor: Colors.black,
+            insetPadding: const EdgeInsets.all(10),
+            child: InteractiveViewer(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(imageUrl),
+              ),
+            ),
+          ),
+    );
+  }
 
   @override
   void initState() {
@@ -120,7 +136,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   itemBuilder:
                       (_, index) => ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(_photoUrls[index]),
+                        child: GestureDetector(
+                          onTap: () {
+                            _showFullImage(_photoUrls[index]);
+                          },
+                          child: Image.network(_photoUrls[index]),
+                        ),
                       ),
                 ),
               ),
