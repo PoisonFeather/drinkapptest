@@ -41,7 +41,8 @@ dependencies:
   geolocator: 11.0.0
   http: ^0.13.6
   share_plus: ^7.2.1
-  
+  workmanager: ^0.5.1
+  flutter_local_notifications: ^17.0.0
 
 dev_dependencies:
   flutter_test:
