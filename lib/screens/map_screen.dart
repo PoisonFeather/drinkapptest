@@ -136,7 +136,7 @@ class _MapScreenState extends State<MapScreen> {
               ? Colors.orange
               : Colors.blue;
       //print(color);
-      points.add(HeatPoint(offset, color, crowded, currzoom, crowded));
+      points.add(HeatPoint(offset, color, crowded, currzoom));
     }
 
     setState(() {
